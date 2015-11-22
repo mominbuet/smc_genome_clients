@@ -60,7 +60,7 @@ public class HELib<T> extends CircuitLib<T> {
 
     public T[] decrypt(T[] a, T[] b) {
 
-        return a;
+        return add(a,b);
     }
 
     public Integer outputToAlice(T[] a) {

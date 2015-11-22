@@ -2,14 +2,10 @@ package CSP;
 
 import Utilities.ChatClientEndpoint;
 import util.*;
-import java.util.Arrays;
 
 import org.apache.commons.cli.ParseException;
 
-import flexsc.CompEnv;
-import flexsc.Flag;
 import flexsc.Mode;
-import flexsc.Party;
 import java.io.StringReader;
 import java.net.Inet4Address;
 import java.net.URI;
