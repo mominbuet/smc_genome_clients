@@ -55,7 +55,6 @@ public class Hospitals {
 
         }
         new Thread(new Runnable() {
-
             @Override
             public void run() {
                 while (true) {
