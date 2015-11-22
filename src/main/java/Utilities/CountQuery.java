@@ -18,7 +18,9 @@ import javax.json.JsonObject;
  */
 public class CountQuery {
 
-    public static JsonObject executeCount(JsonObject msg,String qID) {
+    static BigInteger r = new BigInteger("5714881131644890452843952028302231497460408850954597362377631094638418487691915771506028794235772572047404493606460583590826549316115776900483370456735234");
+
+    public static JsonObject executeCount(JsonObject msg, String qID) {
         JsonObject ret = null;
         String query = msg.getString("text");
         String snip = msg.getString("snip");
@@ -39,12 +41,12 @@ public class CountQuery {
                 }
             }
         }
-        System.out.println("Count "+count);
-        String encrypted = new Paillier(true).Encryption(new BigInteger(count+"")).toString();
-        System.out.println("Encrypted "+encrypted);
+        System.out.println("Count " + count);
+        String encrypted = new Paillier(true).Encryption(new BigInteger(count + ""),r).toString();
+        System.out.println("Encrypted " + encrypted);
         ret = Json.createObjectBuilder()
-                .add("type","result")
-                .add("result", (msg.getString("secure").equals("1")) ? encrypted : count+"")
+                .add("type", "result")
+                .add("result", (msg.getString("secure").equals("1")) ? encrypted : count + "")
                 .add("queryID", qID)
                 .build();
         return ret;
