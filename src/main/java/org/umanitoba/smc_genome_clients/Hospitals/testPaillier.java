@@ -1,0 +1,25 @@
+/*
+ * Md. Momin Al Aziz momin.aziz.cse @ gmail.com	
+ * http://www.mominalaziz.com
+ */
+package org.umanitoba.smc_genome_clients.Hospitals;
+
+import Utilities.Paillier;
+import java.math.BigInteger;
+
+/**
+ *
+ * @author Administrator
+ */
+public class testPaillier {
+
+    public static void main(String[] args) {
+        BigInteger em1 = new BigInteger("72627903957772219307676838354950567459728043880588081285026312241672243882228614967794543489743356047201149574626153287996825802936834688527061337407795634702206109016423830755996354862355178186142127835022647550806324157062767301096618938288118904046921474990878267124765672169444280555940284475207105294265");
+        BigInteger em2 = new BigInteger("10571716293860031885173974449429655371366162212514627471593556913115628569254451553684327562027259753614000383443024936027918113950081049721048408925164533149915080219905325866020453969185357194526942613415021427156750879285360473945280599953353504216165701278009333384508025362337746053845228676393224630390");
+        Paillier paillier = new Paillier(true);
+        BigInteger em3 = paillier.Encryption(new BigInteger("176"));
+        BigInteger em4 = paillier.Encryption(new BigInteger("176"));
+        System.out.println("result1 "+paillier.Decryption(paillier.add(em1, em2)));
+        System.out.println("result2 "+paillier.Decryption(paillier.add(em3, em4)));
+    }
+}

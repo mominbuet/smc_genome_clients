@@ -1,0 +1,8 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}Md. Momin Al Aziz momin.aziz.cse @ gmail.com	
+${licensePrefix}http://www.mominalaziz.com
+<#if licenseLast??>
+${licenseLast}
+</#if>
