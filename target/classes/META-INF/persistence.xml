@@ -3,6 +3,8 @@
   <persistence-unit name="org.umanitoba_smc_genome_clients_jar_1.0PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>Database.Snps</class>
+    <class>Database.RandomSequence</class>
+    <class>Database.Words</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/genomic_data?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

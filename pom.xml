@@ -10,6 +10,18 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
+<!--    <build>
+        <plugins>
+            <plugin>
+                <version>1.0</version>
+                <groupId>org.umanitoba</groupId>
+                <artifactId>smc_genome_clients</artifactId>
+                <configuration>
+                    <mainClass>org.umanitoba.smc_genome_clients.Hospitals.Hospitals</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>-->
     <dependencies>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>

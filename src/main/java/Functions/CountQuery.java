@@ -2,10 +2,11 @@
  * Md. Momin Al Aziz momin.aziz.cse @ gmail.com	
  * http://www.mominalaziz.com
  */
-package Utilities;
+package Functions;
 
 import Database.QueryDB;
 import Database.Snps;
+import Utilities.Paillier;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;

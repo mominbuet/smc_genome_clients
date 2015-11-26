@@ -6,12 +6,14 @@
 package org.umanitoba.smc_genome_clients.Hospitals;
 
 import Utilities.ChatClientEndpoint;
-import Utilities.CountQuery;
+import Functions.CountQuery;
 import java.io.StringReader;
 import java.net.Inet4Address;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
@@ -25,6 +27,7 @@ import util.Utils;
 public class Hospitals {
 
     final static int epoch = 5 * 1000;
+    static Map<String, JsonObject> editDistResult = new HashMap<>();
 
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
         String destUri = "ws://130.179.30.133:8080/smc_genome/endpoint_smc_genome";
@@ -38,13 +41,17 @@ public class Hospitals {
 //                    String queryID = jsonObject.getString("queryID");
                     JsonObject msg = Json.createReader(new StringReader(jsonObject.getString("msg"))).readObject();
                     System.out.println("Operation " + msg.toString());
-
+                    JsonObject ret = null;
                     switch (msg.getString("operation")) {
                         case "count":
-                            JsonObject ret = CountQuery.executeCount(msg, jsonObject.getString("queryID"));
+                            ret = CountQuery.executeCount(msg, jsonObject.getString("queryID"));
                             clientEndPoint.sendMessage(ret.toString());
                             break;
-
+                        case "editdist":
+                            ret = CountQuery.executeCount(msg, jsonObject.getString("queryID"));
+                            editDistResult.put(jsonObject.getString("queryID"), ret);
+                            clientEndPoint.sendMessage(ret.toString());
+                            break;
                     }
                 }
             }
