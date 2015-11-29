@@ -7,17 +7,25 @@ package org.umanitoba.smc_genome_clients.Hospitals;
 
 import Utilities.ChatClientEndpoint;
 import Functions.CountQuery;
+import Functions.EditDistance;
 import java.io.StringReader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import util.Utils;
 
 /**
@@ -25,10 +33,10 @@ import util.Utils;
  * @author shad942
  */
 public class Hospitals {
-
+    
     final static int epoch = 5 * 1000;
-    static Map<String, JsonObject> editDistResult = new HashMap<>();
-
+    static Map<BigInteger, List<String>> editDistResult = new HashMap<>();
+    
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
         String destUri = "ws://130.179.30.133:8080/smc_genome/endpoint_smc_genome";
         final ChatClientEndpoint clientEndPoint = new ChatClientEndpoint(new URI(destUri));
@@ -37,29 +45,62 @@ public class Hospitals {
             public void handleMessage(String message) {
                 System.out.println("Message from server " + message);
                 JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
-                if (jsonObject.getString("type").equals("q")) {
+                switch (jsonObject.getString("type")) {
+                    case "resultEditDistanceCSP":
+                        String distances[] = jsonObject.getString("msg").split(",");
+//                        System.out.println(distances[0]);
+                        JsonObjectBuilder jsonObjectBuilder_dist = Json.createObjectBuilder();
+                        for (String s : distances) {
+                            if (!"".equals(s)) {
+                                if (editDistResult.get(new BigInteger(s)) != null) {
+                                    System.out.println(editDistResult.get(new BigInteger(s)));
+                                    jsonObjectBuilder_dist.add(s, editDistResult.get(new BigInteger(s)).toString());
+                                }
+                            }
+                        }
+                        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+                        jsonObjectBuilder.add("type", "resultEditDistanceHospital")
+                                .add("queryID", jsonObject.getString("queryID"))
+                                .add("result", jsonObjectBuilder_dist.build().toString());
+                        clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
+                        break;
+                    case "q":
 //                    String queryID = jsonObject.getString("queryID");
-                    JsonObject msg = Json.createReader(new StringReader(jsonObject.getString("msg"))).readObject();
-                    System.out.println("Operation " + msg.toString());
-                    JsonObject ret = null;
-                    switch (msg.getString("operation")) {
-                        case "count":
-                            ret = CountQuery.executeCount(msg, jsonObject.getString("queryID"));
-                            clientEndPoint.sendMessage(ret.toString());
-                            break;
-                        case "editdist":
-                            ret = CountQuery.executeCount(msg, jsonObject.getString("queryID"));
-                            editDistResult.put(jsonObject.getString("queryID"), ret);
-                            clientEndPoint.sendMessage(ret.toString());
-                            break;
-                    }
+                        JsonObject msg = Json.createReader(new StringReader(jsonObject.getString("msg"))).readObject();
+                        System.out.println("Operation " + msg.toString());
+                        JsonObject ret = null;
+                        switch (msg.getString("operation")) {
+                            case "count":
+                                ret = CountQuery.executeCount(msg, jsonObject.getString("queryID"));
+                                clientEndPoint.sendMessage(ret.toString());
+                                break;
+                            
+                            case "editdist":
+//                            ret = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
+                                editDistResult = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
+                                jsonObjectBuilder = Json.createObjectBuilder();
+                                jsonObjectBuilder.add("type", "result");
+                                jsonObjectBuilder.add("queryID", jsonObject.getString("queryID"));
+                                String result = "";
+                                for (BigInteger bigInteger : editDistResult.keySet()) {
+                                    result += bigInteger + ",";
+                                }
+                                jsonObjectBuilder.add("result", result);
+//                            System.out.println("result "+result);
+//                            editDistResult.put(jsonObject.getString("queryID"), ret);
+                                //only  encrypted value do here
+
+                                clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
+                                break;
+                        }
+                        break;
                 }
             }
         });
         try {
             clientEndPoint.sendMessage(Utils.getMessage("ih", Inet4Address.getLocalHost().getHostAddress()));
         } catch (UnknownHostException ex) {
-
+            
         }
         new Thread(new Runnable() {
             @Override
@@ -76,7 +117,7 @@ public class Hospitals {
                 }
             }
         }).start();
-
+        
     }
 
     /**

@@ -20,7 +20,7 @@ public class testEditDistance {
                 .add("text", "test")
                 .add("count", "10")
                 .build();
-        JsonObject res = new EditDistance().executeEditDistance(json, "1");
-        System.out.println(" res " + res.toString());
+//        JsonObject res = new EditDistance().executeEditDistance(json, "1");
+//        System.out.println(" res " + res.toString());
     }
 }

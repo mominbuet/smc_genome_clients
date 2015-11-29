@@ -63,7 +63,7 @@ public class Paillier {
             this.g = new BigInteger("5");
         }
         KeyGeneration(512, 64);
-        System.out.println("g: " + g + "\r\n p:" + p + " q: " + q + "\r\n lambda " + lambda);
+//        System.out.println("g: " + g + "\r\n p:" + p + " q: " + q + "\r\n lambda " + lambda);
     }
 
     /**
@@ -128,7 +128,7 @@ public class Paillier {
      */
     public BigInteger Encryption(BigInteger m) {
         BigInteger r = new BigInteger(bitLength, new Random());
-        System.out.println("r " + r);
+//        System.out.println("r " + r);
         return g.modPow(m, nsquare).multiply(r.modPow(n, nsquare)).mod(nsquare);
 
     }

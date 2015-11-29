@@ -6,6 +6,8 @@ package Functions;
 
 import Database.QueryDB;
 import Database.Words;
+import Utilities.Paillier;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -16,6 +18,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -79,17 +82,17 @@ public class EditDistance {
         }
     }
 
-    public JsonObject executeEditDistance(JsonObject msg, String qID) {
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+    public Map<BigInteger, List<String>> executeEditDistance(JsonObject msg, String qID) {
+//        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         String text = msg.getString("text");
+        text = text.replace(" ", "");
         int count = Integer.parseInt(msg.getString("count"));
 
         QueryDB queryDB = new QueryDB();
-        int offset = 0, server1 = ThreadLocalRandom.current().nextInt(0, 3), server2 = ThreadLocalRandom.current().nextInt(4, 6);
+        int offset = 0, server1 = ThreadLocalRandom.current().nextInt(0, 4), server2 = ThreadLocalRandom.current().nextInt(5, 6);
         System.out.println("server1 " + server1 + "server2 " + server2 + " count " + count + " text " + text);
 
-        List<Words> words = queryDB.getFromWords(limit, offset, server1, server2);
-        System.out.println("size " + words.size());
+        List<Words> words = queryDB.getFromWords(limit, offset, server2);
 //        Map<String, Integer> mapDistance = new HashMap<>();
         Map< Integer, List<String>> mapStringDistance = new TreeMap<>();
         while (!words.isEmpty()) {
@@ -111,13 +114,21 @@ public class EditDistance {
             words = queryDB.getFromWords(limit, offset, server1, server2);
 
         }
+//        jsonObjectBuilder.add("type", "result");
+//        jsonObjectBuilder.add("queryID", qID);
 
+        /**
+         * change this to multiple time later
+         */
+//        JsonObjectBuilder jsonObjectBuilder1 = Json.createObjectBuilder();
+        Paillier paillier = new Paillier(true);
+        Map< BigInteger, List<String>> ret = new TreeMap<>();
         for (Map.Entry<Integer, List<String>> entrySet : mapStringDistance.entrySet()) {
-            jsonObjectBuilder.add(entrySet.getKey() + "", entrySet.getValue().toString());
-
+            ret.put(paillier.Encryption(new BigInteger(entrySet.getKey().toString())), entrySet.getValue());
         }
-
-        return jsonObjectBuilder.build();
+//        jsonObjectBuilder.add("result", jsonObjectBuilder1.build().toString());
+//        JsonObject ret = jsonObjectBuilder.build();
+        return ret;
     }
 
     class ValueComparator implements Comparator {
