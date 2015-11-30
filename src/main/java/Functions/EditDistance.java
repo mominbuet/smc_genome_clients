@@ -71,11 +71,12 @@ public class EditDistance {
 
     }
 
-    private void addToMap(Map< Integer, List<String>> mapStringDistance, int distance, String word) {
+    private void addToMap(TreeMap< Integer, List<String>> mapStringDistance, int distance, String word) {
         if (mapStringDistance.get(distance) == null) {
             List<String> tmp = new ArrayList<>();
             tmp.add(word);
             mapStringDistance.put(distance, tmp);
+
         } else {
             if (mapStringDistance.get(distance).size() < 10) {
                 mapStringDistance.get(distance).add(word);
@@ -95,7 +96,7 @@ public class EditDistance {
 
         List<Words> words = queryDB.getFromWords(limit, offset, server2);
 //        Map<String, Integer> mapDistance = new HashMap<>();
-        Map< Integer, List<String>> mapStringDistance = new TreeMap<>();
+        TreeMap< Integer, List<String>> mapStringDistance = new TreeMap<>();
         while (!words.isEmpty()) {
             for (Words word : words) {
                 int distance = getDistance(text, word.getWords());
@@ -110,11 +111,15 @@ public class EditDistance {
                     }
 
                 }
+                if (mapStringDistance.size() > count) {
+                    mapStringDistance.remove(mapStringDistance.pollLastEntry().getKey());
+                }
             }
             offset += 500;
-            words = queryDB.getFromWords(limit, offset, server1, server2);
+            words = queryDB.getFromWords(limit, offset, server2);
 
         }
+        System.out.println("size of the map " + mapStringDistance.size());
 //        jsonObjectBuilder.add("type", "result");
 //        jsonObjectBuilder.add("queryID", qID);
 

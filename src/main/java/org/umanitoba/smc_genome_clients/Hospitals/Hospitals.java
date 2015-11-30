@@ -9,7 +9,6 @@ import Utilities.ChatClientEndpoint;
 import Functions.CountQuery;
 import Functions.EditDistance;
 import java.io.StringReader;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.URI;
@@ -21,11 +20,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 import util.Utils;
 
 /**
@@ -34,7 +30,7 @@ import util.Utils;
  */
 public class Hospitals {
 
-    final static int epoch = 5 * 1000;
+    final static int epoch = 4 * 1000;
     static Map<BigInteger, List<String>> editDistResult = new HashMap<>();
 
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
