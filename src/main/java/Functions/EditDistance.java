@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.json.Json;
@@ -89,7 +90,7 @@ public class EditDistance {
         int count = Integer.parseInt(msg.getString("count"));
 
         QueryDB queryDB = new QueryDB();
-        int offset = 0, server1 = ThreadLocalRandom.current().nextInt(0, 4), server2 = ThreadLocalRandom.current().nextInt(5, 6);
+        int offset = 0, server1 = ThreadLocalRandom.current().nextInt(0, 4), server2 = new Random().nextInt(7);
         System.out.println("server1 " + server1 + "server2 " + server2 + " count " + count + " text " + text);
 
         List<Words> words = queryDB.getFromWords(limit, offset, server2);
