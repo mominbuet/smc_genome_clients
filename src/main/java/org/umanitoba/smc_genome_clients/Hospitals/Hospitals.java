@@ -81,6 +81,7 @@ public class Hospitals {
 
                             case "editdist":
 //                            ret = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
+                                System.out.println("Executing " + msg.toString());
                                 editDistResult = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
                                 JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
                                 jsonObjectBuilder.add("type", "result");
