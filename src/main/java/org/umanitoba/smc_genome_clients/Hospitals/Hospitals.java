@@ -50,19 +50,23 @@ public class Hospitals {
                         String distances[] = jsonObject.getString("msg").split(",");
 //                        System.out.println(distances[0]);
                         JsonObjectBuilder jsonObjectBuilder_dist = Json.createObjectBuilder();
+                        boolean flagToSend = false;
                         for (String s : distances) {
                             if (!"".equals(s)) {
                                 if (editDistResult.get(new BigInteger(s)) != null) {
+                                    flagToSend = true;
                                     System.out.println(editDistResult.get(new BigInteger(s)));
                                     jsonObjectBuilder_dist.add(s, editDistResult.get(new BigInteger(s)).toString());
                                 }
                             }
                         }
-                        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-                        jsonObjectBuilder.add("type", "resultEditDistanceHospital")
-                                .add("queryID", jsonObject.getString("queryID"))
-                                .add("result", jsonObjectBuilder_dist.build().toString());
-                        clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
+                        if (flagToSend) {
+                            JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+                            jsonObjectBuilder.add("type", "resultEditDistanceHospital")
+                                    .add("queryID", jsonObject.getString("queryID"))
+                                    .add("result", jsonObjectBuilder_dist.build().toString());
+                            clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
+                        }
                         break;
                     case "q":
 //                    String queryID = jsonObject.getString("queryID");
@@ -78,7 +82,7 @@ public class Hospitals {
                             case "editdist":
 //                            ret = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
                                 editDistResult = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
-                                jsonObjectBuilder = Json.createObjectBuilder();
+                                JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
                                 jsonObjectBuilder.add("type", "result");
                                 jsonObjectBuilder.add("queryID", jsonObject.getString("queryID"));
                                 String result = "";
