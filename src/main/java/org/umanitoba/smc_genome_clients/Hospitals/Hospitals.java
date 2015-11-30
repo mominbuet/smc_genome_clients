@@ -33,10 +33,10 @@ import util.Utils;
  * @author shad942
  */
 public class Hospitals {
-    
+
     final static int epoch = 5 * 1000;
     static Map<BigInteger, List<String>> editDistResult = new HashMap<>();
-    
+
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
         String destUri = "ws://130.179.30.133:8080/smc_genome/endpoint_smc_genome";
         final ChatClientEndpoint clientEndPoint = new ChatClientEndpoint(new URI(destUri));
@@ -74,7 +74,7 @@ public class Hospitals {
                                 ret = CountQuery.executeCount(msg, jsonObject.getString("queryID"));
                                 clientEndPoint.sendMessage(ret.toString());
                                 break;
-                            
+
                             case "editdist":
 //                            ret = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
                                 editDistResult = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
@@ -86,11 +86,12 @@ public class Hospitals {
                                     result += bigInteger + ",";
                                 }
                                 jsonObjectBuilder.add("result", result);
-//                            System.out.println("result "+result);
+                                JsonObject jsonObject1 = jsonObjectBuilder.build();
+                                System.out.println("result " + jsonObject1.toString());
 //                            editDistResult.put(jsonObject.getString("queryID"), ret);
                                 //only  encrypted value do here
 
-                                clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
+                                clientEndPoint.sendMessage(jsonObject1.toString());
                                 break;
                         }
                         break;
@@ -100,7 +101,7 @@ public class Hospitals {
         try {
             clientEndPoint.sendMessage(Utils.getMessage("ih", Inet4Address.getLocalHost().getHostAddress()));
         } catch (UnknownHostException ex) {
-            
+
         }
         new Thread(new Runnable() {
             @Override
@@ -117,7 +118,7 @@ public class Hospitals {
                 }
             }
         }).start();
-        
+
     }
 
     /**
