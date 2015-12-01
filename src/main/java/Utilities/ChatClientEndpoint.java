@@ -4,6 +4,7 @@
  */
 package Utilities;
 
+import java.io.IOException;
 import java.net.URI;
 
 import javax.websocket.ClientEndpoint;
@@ -84,8 +85,8 @@ public class ChatClientEndpoint {
      * @param user
      * @param message
      */
-    public void sendMessage(String message) {
-        this.userSession.getAsyncRemote().sendText(message);
+    public void sendMessage(String message) throws IOException {
+        this.userSession.getBasicRemote().sendText(message);
     }
 
     /**

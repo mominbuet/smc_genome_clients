@@ -101,24 +101,24 @@ public class Hospitals {
         });
         try {
             clientEndPoint.sendMessage(Utils.getMessage("ih", Inet4Address.getLocalHost().getHostAddress()));
-        } catch (UnknownHostException ex) {
-
-        }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        clientEndPoint.sendMessage(Utils.getMessage("ping", ""));
-                        Thread.sleep(Hospitals.epoch);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-                    } catch (Exception ex) {
-                        Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            clientEndPoint.sendMessage(Utils.getMessage("ping", ""));
+                            Thread.sleep(Hospitals.epoch);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                        } catch (Exception ex) {
+                            Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                        }
                     }
                 }
-            }
-        }).start();
+            }).start();
+        } catch (UnknownHostException ex) {
+            System.out.println("exception ");
+        }
 
     }
 
