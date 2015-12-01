@@ -72,9 +72,10 @@ public abstract class CSP<T> {
 //                        
 //                    }
                     } else if (jsonObject.getString("type").equals("editdist")) {
+
                         tmpDistances += jsonObject.getString("distances") + ",";
                         if (jsonObject.getInt("times") == jsonObject.getInt("total")) {
-
+                            System.out.println("doing edit dist");
                             JsonObject query = jsonObject.getJsonObject("query");
                             int count = Integer.parseInt(query.getJsonObject("msg").getString("count", "10"));
                             if (tmpDistances.equals("")) {
@@ -110,6 +111,7 @@ public abstract class CSP<T> {
                             try {
                                 clientEndPoint.sendMessage(Utils.getMessage("resultEditDistanceCSP", result));
                             } catch (IOException ex) {
+                                ex.printStackTrace();
                                 Logger.getLogger(CSP.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             tmpDistances = "";
@@ -135,9 +137,8 @@ public abstract class CSP<T> {
                         try {
                             clientEndPoint.sendMessage(Utils.getMessage("ping", ""));
                             Thread.sleep(epoch);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
                         } catch (Exception ex) {
+                            ex.printStackTrace();
                             Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
                         }
                     }
