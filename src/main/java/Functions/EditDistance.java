@@ -84,7 +84,7 @@ public class EditDistance {
         }
     }
 
-    public Map<BigInteger, List<String>> executeEditDistance(JsonObject msg, String qID) {
+    public Map<BigInteger, List<String>> executeEditDistance(JsonObject msg, String qID,int serverNo) {
 //        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         String text = msg.getString("text");
         text = text.replace(" ", "");
@@ -94,7 +94,7 @@ public class EditDistance {
         int offset = 0, server1 = ThreadLocalRandom.current().nextInt(0, 4), server2 = new Random().nextInt(7);
         System.out.println("server1 " + server1 + "server2 " + server2 + " count " + count + " text " + text);
 
-        List<Words> words = queryDB.getFromWords(limit, offset, server2);
+        List<Words> words = queryDB.getFromWords(limit, offset, serverNo);
 //        Map<String, Integer> mapDistance = new HashMap<>();
         TreeMap< Integer, List<String>> mapStringDistance = new TreeMap<>();
         while (!words.isEmpty()) {
@@ -116,7 +116,7 @@ public class EditDistance {
                 }
             }
             offset += 500;
-            words = queryDB.getFromWords(limit, offset, server2);
+            words = queryDB.getFromWords(limit, offset, serverNo);
 
         }
         System.out.println("size of the map " + mapStringDistance.size());

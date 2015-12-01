@@ -32,6 +32,7 @@ import util.Utils;
 public class Hospitals {
 
     final static int epoch = 4 * 1000;
+    static int serverNo = 0;
     static Map<BigInteger, List<String>> editDistResult = new HashMap<>();
 
     public static void main(String[] args) throws InterruptedException, URISyntaxException, IOException {
@@ -41,8 +42,13 @@ public class Hospitals {
             @Override
             public void handleMessage(String message) {
                 System.out.println("Message from server " + message);
+                
                 JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
+                
                 switch (jsonObject.getString("type")) {
+                    case "wl":
+                        serverNo =Integer.parseInt( jsonObject.getString("msg"));
+                        break;
                     case "resultEditDistanceCSP":
                         String distances[] = jsonObject.getString("msg").split(",");
 //                        System.out.println(distances[0]);
