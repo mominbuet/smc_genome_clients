@@ -7,6 +7,7 @@ import util.*;
 import org.apache.commons.cli.ParseException;
 
 import flexsc.Mode;
+import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigInteger;
 import java.net.Inet4Address;
@@ -28,66 +29,7 @@ import org.umanitoba.smc_genome_clients.Hospitals.Hospitals;
 public abstract class CSP<T> {
 
     final static int epoch = 4 * 1000;
-
-//    public abstract void prepareInput(CompEnv<T> gen) throws Exception;
-//
-//    public abstract void secureCompute(CompEnv<T> gen) throws Exception;
-//
-//    public abstract void prepareOutput(CompEnv<T> gen) throws Exception;
     Mode m;
-//    int port;
-//    String host;
-//    protected String[] args;
-//    public boolean verbose = true;
-//    public ConfigParser config;
-//
-//    public void setParameter(ConfigParser config, String[] args) {
-//        this.m = Mode.getMode(config.getString("Mode"));
-//        this.port = config.getInt("Port");
-//        host = config.getString("Host");
-//        this.args = args;
-//        this.config = config;
-//    }
-//
-//    public void setParameter(Mode m, String host, int port) {
-//        this.m = m;
-//        this.port = port;
-//        this.host = host;
-//    }
-//
-//    public void run() {
-//        try {
-//            if (verbose) {
-//                System.out.println("connecting EVA");
-//            }
-//            connect(host, port);
-//            if (verbose) {
-//                System.out.println("connected");
-//            }
-//
-//            @SuppressWarnings("unchecked")
-//            CompEnv<T> env = CompEnv.getEnv(m, Party.Bob, this);
-//
-//            double s = System.nanoTime();
-//            Flag.sw.startTotal();
-//            prepareInput(env);
-//            os.flush();
-//            secureCompute(env);
-//            os.flush();
-//            prepareOutput(env);
-//            os.flush();
-//            Flag.sw.stopTotal();
-//            double e = System.nanoTime();
-//            disconnect();
-//            if (verbose) {
-//                System.out.println("Eva running time:" + (e - s) / 1e9);
-//                System.out.println("Number Of AND Gates:" + env.numOfAnds);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-//    }
     static int timesSending = 0;
     static String tmpDistances = "";
 
@@ -165,7 +107,11 @@ public abstract class CSP<T> {
                             }
                             System.out.println("result " + result);
                             System.out.println("edit distance sorted " + Utils.getMessage("resultEditDistanceCSP", result));
-                            clientEndPoint.sendMessage(Utils.getMessage("resultEditDistanceCSP", result));
+                            try {
+                                clientEndPoint.sendMessage(Utils.getMessage("resultEditDistanceCSP", result));
+                            } catch (IOException ex) {
+                                Logger.getLogger(CSP.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             tmpDistances = "";
 //                    System.out.println("found " + jsonArray.getString(1));
 //                    System.out.println("distances " + jsonObject.getJsonArray("distances").toString());

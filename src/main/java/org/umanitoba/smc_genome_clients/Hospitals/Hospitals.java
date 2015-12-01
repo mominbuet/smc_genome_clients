@@ -8,6 +8,7 @@ package org.umanitoba.smc_genome_clients.Hospitals;
 import Utilities.ChatClientEndpoint;
 import Functions.CountQuery;
 import Functions.EditDistance;
+import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigInteger;
 import java.net.Inet4Address;
@@ -33,7 +34,7 @@ public class Hospitals {
     final static int epoch = 4 * 1000;
     static Map<BigInteger, List<String>> editDistResult = new HashMap<>();
 
-    public static void main(String[] args) throws InterruptedException, URISyntaxException {
+    public static void main(String[] args) throws InterruptedException, URISyntaxException, IOException {
         String destUri = "ws://130.179.30.133:8080/smc_genome/endpoint_smc_genome";
         final ChatClientEndpoint clientEndPoint = new ChatClientEndpoint(new URI(destUri));
         clientEndPoint.addMessageHandler(new ChatClientEndpoint.MessageHandler() {
@@ -61,7 +62,11 @@ public class Hospitals {
                             jsonObjectBuilder.add("type", "resultEditDistanceHospital")
                                     .add("queryID", jsonObject.getString("queryID"))
                                     .add("result", jsonObjectBuilder_dist.build().toString());
-                            clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
+                            try {
+                                clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
+                            } catch (IOException ex) {
+                                Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                         break;
                     case "q":
@@ -72,7 +77,13 @@ public class Hospitals {
                         switch (msg.getString("operation")) {
                             case "count":
                                 ret = CountQuery.executeCount(msg, jsonObject.getString("queryID"));
-                                clientEndPoint.sendMessage(ret.toString());
+                                 {
+                                    try {
+                                        clientEndPoint.sendMessage(ret.toString());
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
                                 break;
 
                             case "editdist":
@@ -91,8 +102,13 @@ public class Hospitals {
                                 System.out.println("result " + jsonObject1.toString());
 //                            editDistResult.put(jsonObject.getString("queryID"), ret);
                                 //only  encrypted value do here
-
-                                clientEndPoint.sendMessage(jsonObject1.toString());
+                                 {
+                                    try {
+                                        clientEndPoint.sendMessage(jsonObject1.toString());
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
                                 break;
                         }
                         break;
