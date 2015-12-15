@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Snps.findById", query = "SELECT s FROM Snps s WHERE s.id = :id"),
     @NamedQuery(name = "Snps.findBySnip", query = "SELECT s FROM Snps s WHERE s.snip = :snip"),
     @NamedQuery(name = "Snps.findByDescription", query = "SELECT s FROM Snps s WHERE s.description = :description"),
-    @NamedQuery(name = "Snps.findByInserted", query = "SELECT s FROM Snps s WHERE s.inserted = :inserted"),
     @NamedQuery(name = "Snps.findByUpdated", query = "SELECT s FROM Snps s WHERE s.updated = :updated"),
     @NamedQuery(name = "Snps.findByType", query = "SELECT s FROM Snps s WHERE s.type = :type"),
     @NamedQuery(name = "Snps.findByServerName", query = "SELECT s FROM Snps s WHERE s.serverName = :serverName")})
@@ -48,10 +47,6 @@ public class Snps implements Serializable {
     @Basic(optional = false)
     @Column(name = "description")
     private String description;
-    @Basic(optional = false)
-    @Column(name = "inserted")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date inserted;
     @Column(name = "updated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
@@ -68,11 +63,10 @@ public class Snps implements Serializable {
         this.id = id;
     }
 
-    public Snps(Integer id, String snip, String description, Date inserted, String type) {
+    public Snps(Integer id, String snip, String description, String type) {
         this.id = id;
         this.snip = snip;
         this.description = description;
-        this.inserted = inserted;
         this.type = type;
     }
 
@@ -98,14 +92,6 @@ public class Snps implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Date getInserted() {
-        return inserted;
-    }
-
-    public void setInserted(Date inserted) {
-        this.inserted = inserted;
     }
 
     public Date getUpdated() {
