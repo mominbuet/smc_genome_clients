@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Md. Momin Al Aziz momin.aziz.cse @ gmail.com	
+ * http://www.mominalaziz.com
  */
 package Database;
 
@@ -34,7 +33,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Snps.findByDescription", query = "SELECT s FROM Snps s WHERE s.description = :description"),
     @NamedQuery(name = "Snps.findByInserted", query = "SELECT s FROM Snps s WHERE s.inserted = :inserted"),
     @NamedQuery(name = "Snps.findByUpdated", query = "SELECT s FROM Snps s WHERE s.updated = :updated"),
-    @NamedQuery(name = "Snps.findBySnipAndType", query = "SELECT s FROM Snps s WHERE s.snip = :snip and s.type=:type"),
     @NamedQuery(name = "Snps.findByType", query = "SELECT s FROM Snps s WHERE s.type = :type"),
     @NamedQuery(name = "Snps.findByServerName", query = "SELECT s FROM Snps s WHERE s.serverName = :serverName")})
 public class Snps implements Serializable {

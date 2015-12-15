@@ -9,8 +9,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+
+<!--        <izpack.version>5.0.0</izpack.version>
+        <izpack.staging>${project.build.directory}/target</izpack.staging>-->
+
     </properties>
-<!--    <build>
+    <!--    <build>
         <plugins>
             <plugin>
                 <version>1.0</version>
