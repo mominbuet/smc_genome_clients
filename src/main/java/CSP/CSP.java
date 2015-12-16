@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -84,29 +85,33 @@ public abstract class CSP<T> {
 
                             String[] distances = tmpDistances.split(",");
                             System.out.println("distance size " + distances.length);
-                            Map<Integer, List<String>> numericDistances = new TreeMap<>();
+                            Map<Integer, String> numericDistances = new TreeMap<>();
                             Paillier paillier = new Paillier(true);
                             for (int i = 0; i < distances.length; i++) {
                                 if (!"".equals(distances[i])) {
                                     int decrypted = Integer.valueOf(paillier.Decryption(new BigInteger(distances[i])).toString());
                                     if (numericDistances.get(decrypted) != null) {
-                                        numericDistances.get(decrypted).add(distances[i]);
+                                        numericDistances.put(decrypted, numericDistances.get(decrypted) + "," + distances[i]);
                                     } else {
-                                        List<String> tmp = new ArrayList<>();
-                                        tmp.add(distances[i]);
-                                        numericDistances.put(decrypted, tmp);
+//                                        List<String> tmp = new ArrazvyList<>();
+//                                        tmp.add(distances[i]);
+                                        numericDistances.put(decrypted, distances[i]);
                                     }
                                 }
                             }
-//                        System.out.println("count " + numericDistances.size());
+                            System.out.println("count " + count);
                             String result = jsonObject.getInt("queryID") + ";";
                             List<Integer> keys = new ArrayList<>(numericDistances.keySet());
+                            Iterator it = numericDistances.values().iterator();
+                            Iterator itKey = numericDistances.keySet().iterator();
                             for (int i = 0; i < count; i++) {
-                                for (String s : numericDistances.get(keys.get(i))) {
-                                    result += s + ",";
-                                }
+//                                for (String s : numericDistances.get(keys.get(i))) {
+//                                    result += s + ",";
+//                                }
+                                
+                                result += it.next() + ",";
                             }
-                            System.out.println("result " + result);
+                            System.out.println("result " + result.split(";")[1].split(",").length);
                             System.out.println("edit distance sorted " + Utils.getMessage("resultEditDistanceCSP", result));
                             try {
                                 clientEndPoint.sendMessage(Utils.getMessage("resultEditDistanceCSP", result));
