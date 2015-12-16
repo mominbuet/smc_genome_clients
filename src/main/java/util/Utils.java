@@ -11,9 +11,19 @@ import java.util.Arrays;
 import flexsc.CompEnv;
 import flexsc.Party;
 import java.util.BitSet;
+import java.util.Map;
 import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 
 public class Utils {
+
+    public static String getMessage(Map<String, String> map) {
+        JsonObjectBuilder json = Json.createObjectBuilder();
+        for (Map.Entry<String, String> entrySet : map.entrySet()) {
+            json.add(entrySet.getKey(), entrySet.getValue());
+        }
+        return json.build().toString();
+    }
 
     public static String getMessage(String type, String message) {
         return Json.createObjectBuilder()

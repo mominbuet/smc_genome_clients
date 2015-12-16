@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Snps.findByDescription", query = "SELECT s FROM Snps s WHERE s.description = :description"),
     @NamedQuery(name = "Snps.findByUpdated", query = "SELECT s FROM Snps s WHERE s.updated = :updated"),
     @NamedQuery(name = "Snps.findByType", query = "SELECT s FROM Snps s WHERE s.type = :type"),
+//    @NamedQuery(name = "Snps.findSnipRandom", query = "SELECT s FROM Snps s order by random()"),
     @NamedQuery(name = "Snps.findByServerName", query = "SELECT s FROM Snps s WHERE s.serverName = :serverName")})
 public class Snps implements Serializable {
     private static final long serialVersionUID = 1L;
