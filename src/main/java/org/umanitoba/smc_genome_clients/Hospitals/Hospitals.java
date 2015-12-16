@@ -42,12 +42,12 @@ public class Hospitals {
             @Override
             public void handleMessage(String message) {
                 System.out.println("Message from server " + message);
-                
+
                 JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
-                
+
                 switch (jsonObject.getString("type")) {
                     case "wl":
-                        serverNo =Integer.parseInt( jsonObject.getString("msg"));
+                        serverNo = Integer.parseInt(jsonObject.getString("msg"));
                         break;
                     case "resultEditDistanceCSP":
                         String distances[] = jsonObject.getString("msg").split(",");
@@ -79,6 +79,7 @@ public class Hospitals {
 //                    String queryID = jsonObject.getString("queryID");
                         JsonObject msg = Json.createReader(new StringReader(jsonObject.getString("msg"))).readObject();
                         System.out.println("Operation " + msg.toString());
+                        boolean secure = msg.getString("secure", "1").equals("1");
                         JsonObject ret = null;
                         switch (msg.getString("operation")) {
                             case "count":
@@ -95,11 +96,12 @@ public class Hospitals {
                             case "editdist":
 //                            ret = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
                                 System.out.println("Executing " + msg.toString());
-                                editDistResult = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"),serverNo);
+                                editDistResult = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"), serverNo,secure);
                                 JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
                                 jsonObjectBuilder.add("type", "result");
                                 jsonObjectBuilder.add("queryID", jsonObject.getString("queryID"));
                                 String result = "";
+
                                 for (BigInteger bigInteger : editDistResult.keySet()) {
                                     result += bigInteger + ",";
                                 }

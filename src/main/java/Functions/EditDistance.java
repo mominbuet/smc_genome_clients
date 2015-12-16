@@ -84,7 +84,7 @@ public class EditDistance {
         }
     }
 
-    public Map<BigInteger, List<String>> executeEditDistance(JsonObject msg, String qID,int serverNo) {
+    public Map<BigInteger, List<String>> executeEditDistance(JsonObject msg, String qID, int serverNo, boolean secure) {
 //        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         String text = msg.getString("text");
         text = text.replace(" ", "");
@@ -130,7 +130,7 @@ public class EditDistance {
         Paillier paillier = new Paillier(true);
         Map< BigInteger, List<String>> ret = new TreeMap<>();
         for (Map.Entry<Integer, List<String>> entrySet : mapStringDistance.entrySet()) {
-            ret.put(paillier.Encryption(new BigInteger(entrySet.getKey().toString())), entrySet.getValue());
+            ret.put(secure ? paillier.Encryption(new BigInteger(entrySet.getKey().toString())) : new BigInteger(entrySet.getKey().toString()), entrySet.getValue());
         }
 //        jsonObjectBuilder.add("result", jsonObjectBuilder1.build().toString());
 //        JsonObject ret = jsonObjectBuilder.build();

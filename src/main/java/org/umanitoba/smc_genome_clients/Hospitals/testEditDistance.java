@@ -23,9 +23,9 @@ public class testEditDistance {
                 .add("text", "test")
                 .add("count", "10")
                 .build();
-        
-        Map<BigInteger, List<String>> res = new EditDistance().executeEditDistance(json, "1",0);
-        System.out.println("res "+res.size());
+
+        Map<BigInteger, List<String>> res = new EditDistance().executeEditDistance(json, "1", 0, true);
+        System.out.println("res " + res.size());
 //        System.out.println(" res " + res.toString());
     }
 }
