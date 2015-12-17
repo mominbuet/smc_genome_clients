@@ -15,6 +15,7 @@ import java.net.Inet4Address;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +31,21 @@ import util.Utils;
  * @author shad942
  */
 public class Hospitals {
-
+    
     final static int epoch = 4 * 1000;
     static int serverNo = 0;
     static Map<BigInteger, List<String>> editDistResult = new HashMap<>();
-
+    static List<String> packetList = new ArrayList<>();
+    
+    static void sendACK(String packetNo, ChatClientEndpoint clientEndPoint) {
+        try {
+            //                        System.out.println(distances[0]);
+            clientEndPoint.sendMessage(Utils.getMessage("ack", packetNo));
+        } catch (IOException ex) {
+            Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public static void main(String[] args) throws InterruptedException, URISyntaxException, IOException {
         String destUri = "ws://130.179.30.133:8080/smc_genome/endpoint_smc_genome";
         final ChatClientEndpoint clientEndPoint = new ChatClientEndpoint(new URI(destUri));
@@ -42,36 +53,41 @@ public class Hospitals {
             @Override
             public void handleMessage(String message) {
                 System.out.println("Message from server " + message);
-
+                
                 JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
-
+                
                 switch (jsonObject.getString("type")) {
                     case "wl":
                         serverNo = Integer.parseInt(jsonObject.getString("msg"));
                         break;
                     case "resultEditDistanceCSP":
-                        String distances[] = jsonObject.getString("msg").split(",");
-//                        System.out.println(distances[0]);
-                        JsonObjectBuilder jsonObjectBuilder_dist = Json.createObjectBuilder();
-                        boolean flagToSend = false;
-                        for (String s : distances) {
-                            if (!"".equals(s)) {
-                                if (editDistResult.get(new BigInteger(s)) != null) {
-                                    flagToSend = true;
-                                    System.out.println(editDistResult.get(new BigInteger(s)));
-                                    jsonObjectBuilder_dist.add(s, editDistResult.get(new BigInteger(s)).toString());
+                        if (packetList.contains(jsonObject.getString("packetNo"))) {
+                            break;
+                        } else {
+                            packetList.add(jsonObject.getString("packetNo"));
+                            sendACK(jsonObject.getString("packetNo"), clientEndPoint);
+                            String distances[] = jsonObject.getString("msg").split(",");
+                            JsonObjectBuilder jsonObjectBuilder_dist = Json.createObjectBuilder();
+                            boolean flagToSend = false;
+                            for (String s : distances) {
+                                if (!"".equals(s)) {
+                                    if (editDistResult.get(new BigInteger(s)) != null) {
+                                        flagToSend = true;
+                                        System.out.println(editDistResult.get(new BigInteger(s)));
+                                        jsonObjectBuilder_dist.add(s, editDistResult.get(new BigInteger(s)).toString());
+                                    }
                                 }
                             }
-                        }
-                        if (flagToSend) {
-                            JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-                            jsonObjectBuilder.add("type", "resultEditDistanceHospital")
-                                    .add("queryID", jsonObject.getString("queryID"))
-                                    .add("result", jsonObjectBuilder_dist.build().toString());
-                            try {
-                                clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
-                            } catch (IOException ex) {
-                                Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, null, ex);
+                            if (flagToSend) {
+                                JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+                                jsonObjectBuilder.add("type", "resultEditDistanceHospital")
+                                        .add("queryID", jsonObject.getString("queryID"))
+                                        .add("result", jsonObjectBuilder_dist.build().toString());
+                                try {
+                                    clientEndPoint.sendMessage(jsonObjectBuilder.build().toString());
+                                } catch (IOException ex) {
+                                    Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                             }
                         }
                         break;
@@ -92,16 +108,16 @@ public class Hospitals {
                                     }
                                 }
                                 break;
-
+                            
                             case "editdist":
 //                            ret = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"));
                                 System.out.println("Executing " + msg.toString());
-                                editDistResult = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"), serverNo,secure);
+                                editDistResult = new EditDistance().executeEditDistance(msg, jsonObject.getString("queryID"), serverNo, secure);
                                 JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
                                 jsonObjectBuilder.add("type", "result");
                                 jsonObjectBuilder.add("queryID", jsonObject.getString("queryID"));
                                 String result = "";
-
+                                
                                 for (BigInteger bigInteger : editDistResult.keySet()) {
                                     result += bigInteger + ",";
                                 }
@@ -110,13 +126,13 @@ public class Hospitals {
                                 System.out.println("result " + jsonObject1.toString());
 //                            editDistResult.put(jsonObject.getString("queryID"), ret);
                                 //only  encrypted value do here
-                                 {
-                                    try {
-                                        clientEndPoint.sendMessage(jsonObject1.toString());
-                                    } catch (IOException ex) {
-                                        Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, null, ex);
-                                    }
+
+                                try {
+                                    clientEndPoint.sendMessage(jsonObject1.toString());
+                                } catch (IOException ex) {
+                                    Logger.getLogger(Hospitals.class.getName()).log(Level.SEVERE, null, ex);
                                 }
+                                
                                 break;
                         }
                         break;
@@ -143,7 +159,7 @@ public class Hospitals {
         } catch (UnknownHostException ex) {
             System.out.println("exception ");
         }
-
+        
     }
 
     /**

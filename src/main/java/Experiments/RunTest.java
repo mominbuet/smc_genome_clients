@@ -35,10 +35,10 @@ public class RunTest {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add("type", "q");
         JsonObjectBuilder msg = Json.createObjectBuilder();
-        msg.add("operation", "count");
+        msg.add("operation", "editdist");
         msg.add("count", "10");
-        msg.add("secure", "0");
-        msg.add("text", "AA");
+        msg.add("secure", "1");
+        msg.add("text", "ahmed");
         msg.add("snip", queryDB.getRandomSnip().get(0).getSnip());
         msg.add("type", "all");
         jsonObjectBuilder.add("msg", msg.build());
