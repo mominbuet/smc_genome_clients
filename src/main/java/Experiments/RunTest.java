@@ -9,10 +9,8 @@ import Database.QueryDB;
 import Utilities.ChatClientEndpoint;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.Inet4Address;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
@@ -30,16 +28,17 @@ import util.Utils;
 public class RunTest {
 
     static int iterations = 9;
+    static Date d1;
 
     public static JsonObject getTestCase() {
         QueryDB queryDB = new QueryDB();
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add("type", "q");
         JsonObjectBuilder msg = Json.createObjectBuilder();
-        msg.add("operation", "editdist");
-        msg.add("count", "5");
-        msg.add("secure", "1");
-        msg.add("text", "ahmed");
+        msg.add("operation", "count");
+        msg.add("count", "10");
+        msg.add("secure", "0");
+        msg.add("text", "AA");
         msg.add("snip", queryDB.getRandomSnip().get(0).getSnip());
         msg.add("type", "all");
         jsonObjectBuilder.add("msg", msg.build());
@@ -49,8 +48,7 @@ public class RunTest {
     public static void main(String[] args) throws URISyntaxException, InterruptedException {
         final ConfigParser config = new ConfigParser("Config.conf");
         String destUri = "ws://" + config.getString("Host") + ":" + config.getString("SocketPort") + "/" + config.getString("SocketEndpoint");
-        Date d1 = new Date();
-
+        Date d11 = new Date();
 //        System.out.println("Endpoint " + destUri);
         final ChatClientEndpoint clientEndPoint = new ChatClientEndpoint(new URI(destUri));
         clientEndPoint.addMessageHandler(new ChatClientEndpoint.MessageHandler() {
@@ -60,19 +58,24 @@ public class RunTest {
 //                System.out.println("Message from server " + message);
                 JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
                 if (jsonObject.getString("type").equals("result")) {
-                    System.out.println(iterations + " Message from server " + message);
+                    Date d2 = new Date();
+                    System.out.println(((d2.getTime() - d1.getTime())));
+//                    System.out.println(iterations + " Message from server " + message);
                     iterations--;
                     try {
-                        clientEndPoint.sendMessage(getTestCase().toString());
+                        if (iterations > -1) {
+                            clientEndPoint.sendMessage(getTestCase().toString());
+                        }
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         Logger.getLogger(CSP.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    d1 = new Date();
                 }
 
             }
         });
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
@@ -86,11 +89,12 @@ public class RunTest {
                     }
                 }
             }
-        }).start();
-
+        });
+//        t.start();
         try {
-            clientEndPoint.sendMessage(getTestCase().toString());
 
+            clientEndPoint.sendMessage(getTestCase().toString());
+            d1 = new Date();
         } catch (IOException ex) {
             ex.printStackTrace();
             Logger.getLogger(CSP.class.getName()).log(Level.SEVERE, null, ex);
@@ -99,7 +103,8 @@ public class RunTest {
 //            System.out.println("iteration "+iterations);
             Thread.sleep(500);
         }
-        Date d2 = new Date();
-        System.out.println("Running time " + ((d2.getTime() - d1.getTime())));
+//        t.join();
+        Date d22 = new Date();
+        System.out.println("Total Running time " + ((d22.getTime() - d11.getTime())));
     }
 }
