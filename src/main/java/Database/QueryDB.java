@@ -76,6 +76,20 @@ public class QueryDB {
         }
         return res;
     }
+    public List<Snps> getSnipfromID(int id) {
+        List<Snps> res = new ArrayList<>();
+        try {
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.umanitoba_smc_genome_clients_jar_1.0PU");
+            EntityManager em = emf.createEntityManager();
+            res = em.createNamedQuery("Snps.findById", Snps.class)
+                    .setParameter("id",id)
+                    .setMaxResults(1)
+                    .getResultList();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return res;
+    }
 
     public List<Snps> getRandomSnip() {
         List<Snps> res = new ArrayList<>();
