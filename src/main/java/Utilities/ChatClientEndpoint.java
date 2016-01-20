@@ -84,9 +84,14 @@ public class ChatClientEndpoint {
      *
      * @param user
      * @param message
+     * @throws java.io.IOException
      */
     public void sendMessage(String message) throws IOException {
         this.userSession.getBasicRemote().sendText(message);
+    }
+
+    public void sendMessageAsyncrhonous(String message){
+        this.userSession.getAsyncRemote().sendText(message);
     }
 
     /**

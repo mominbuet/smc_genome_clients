@@ -6,6 +6,7 @@ package Functions;
 
 import Database.QueryDB;
 import Database.Words;
+import OPE.RegularOPE;
 import Utilities.Paillier;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -82,6 +83,58 @@ public class EditDistance {
                 mapStringDistance.get(distance).add(word);
             }
         }
+    }
+
+    public Map<BigInteger, List<String>> executeEditDistanceOrderPreserving(JsonObject msg, String qID, int serverNo, boolean secure) {
+//        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        String text = msg.getString("text");
+        text = text.replace(" ", "");
+        int count = Integer.parseInt(msg.getString("count"));
+
+        QueryDB queryDB = new QueryDB();
+        int offset = 0, server1 = ThreadLocalRandom.current().nextInt(0, 4), server2 = new Random().nextInt(7);
+        System.out.println("server1 " + server1 + "server2 " + server2 + " count " + count + " text " + text);
+
+        List<Words> words = queryDB.getFromWords(limit, offset, serverNo);
+//        Map<String, Integer> mapDistance = new HashMap<>();
+        TreeMap< Integer, List<String>> mapStringDistance = new TreeMap<>();
+        while (!words.isEmpty()) {
+            for (Words word : words) {
+                int distance = getDistance(text, word.getWords());
+                if (mapStringDistance.size() < count) {
+                    addToMap(mapStringDistance, distance, word.getWords());
+                    highestDistance = (highestDistance > distance) ? distance : highestDistance;
+                } else if (distance < highestDistance) {
+                    addToMap(mapStringDistance, distance, word.getWords());
+                    Iterator it = mapStringDistance.keySet().iterator();
+                    while (it.hasNext()) {
+                        highestDistance = Integer.parseInt(it.next() + "");
+                    }
+
+                }
+                if (mapStringDistance.size() > count) {
+                    mapStringDistance.remove(mapStringDistance.pollLastEntry().getKey());
+                }
+            }
+            offset += 500;
+            words = queryDB.getFromWords(limit, offset, serverNo);
+
+        }
+        System.out.println("size of the map " + mapStringDistance.size());
+//        jsonObjectBuilder.add("type", "result");
+//        jsonObjectBuilder.add("queryID", qID);
+
+        /**
+         * change this to multiple time later
+         */
+//        JsonObjectBuilder jsonObjectBuilder1 = Json.createObjectBuilder();
+        Map< BigInteger, List<String>> ret = new TreeMap<>();
+        for (Map.Entry<Integer, List<String>> entrySet : mapStringDistance.entrySet()) {
+            ret.put(secure ? (new BigInteger(new RegularOPE().getOPE(entrySet.getKey()) + "")) : new BigInteger(entrySet.getKey().toString()), entrySet.getValue());
+        }
+//        jsonObjectBuilder.add("result", jsonObjectBuilder1.build().toString());
+//        JsonObject ret = jsonObjectBuilder.build();
+        return ret;
     }
 
     public Map<BigInteger, List<String>> executeEditDistance(JsonObject msg, String qID, int serverNo, boolean secure) {

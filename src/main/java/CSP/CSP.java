@@ -72,6 +72,21 @@ public abstract class CSP<T> {
 //                    if (msg.getString("operation").equals("decryption")) {
 //                        
 //                    }
+                    } else if (jsonObject.getString("type").equals("decryptionWithoutGC")) {
+                        
+                        JsonObject result = Json.createObjectBuilder()
+                                .add("type", "decryptionWithoutGC")
+                                .add("query", jsonObject.getJsonObject("query"))//though it will be given earlier to initiate the keys
+                                .add("queryID", jsonObject.getInt("queryID"))
+                                .add("result", new Paillier(true).Decryption(new BigInteger(jsonObject.getString("result"))))
+                                .build();
+                        System.out.println("decryptionWithoutGC "+result.toString());
+                        try {
+                            
+                            clientEndPoint.sendMessage(result.toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(CSP.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     } else if (jsonObject.getString("type").equals("editdist")) {
 
                         tmpDistances += jsonObject.getString("distances") + ",";
@@ -108,7 +123,7 @@ public abstract class CSP<T> {
 //                                for (String s : numericDistances.get(keys.get(i))) {
 //                                    result += s + ",";
 //                                }
-                                
+
                                 result += it.next() + ",";
                             }
                             System.out.println("result " + result.split(";")[1].split(",").length);
